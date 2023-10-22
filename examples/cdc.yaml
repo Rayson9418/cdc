@@ -1,0 +1,38 @@
+---
+mysql:
+  addr: "mysql_yzp:3306"
+  user: "root"
+  pwd: "123456"
+  databases:
+    - name: demo
+      tables:
+        - name: demo1
+          actions:
+            - insert
+            - update
+            - delete
+        - name: demo2
+
+mongo:
+  addr: "mongo_yzp:27017"
+  user: "root"
+  pwd: "123456"
+  auth: false
+  direct: true
+  pool_size: 10
+  timeout: 60
+  databases:
+    - name: demo
+      collections:
+        - name: demo1
+          actions:
+            - insert
+            - update
+            - delete
+
+redis:
+  type: single # single/sentinel
+  addr: "redis_yzp:6379"
+  user: "root"
+  pwd: "123456"
+  auth: false
