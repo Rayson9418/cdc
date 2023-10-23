@@ -1,8 +1,9 @@
 package mysql
 
 import (
-	cdcmysql "github.com/Rayson9418/cdc/mysql"
 	"time"
+
+	cdcmysql "github.com/Rayson9418/cdc/mysql"
 )
 
 type DemoData struct {

@@ -1,6 +1,6 @@
 ---
 mysql:
-  addr: "mysql_yzp:3306"
+  addr: "mysql:3306"
   user: "root"
   pwd: "123456"
   databases:
@@ -12,9 +12,11 @@ mysql:
             - update
             - delete
         - name: demo2
+          actions:
+            - insert
 
 mongo:
-  addr: "mongo_yzp:27017"
+  addr: "mongo:27017"
   user: "root"
   pwd: "123456"
   auth: false
@@ -32,7 +34,13 @@ mongo:
 
 redis:
   type: single # single/sentinel
-  addr: "redis_yzp:6379"
+  addr: "redis:6379"
   user: "root"
   pwd: "123456"
   auth: false
+
+syncer:
+  start_hour: 10
+  end_hour: 23
+  batch_limit: 2
+  interval: 5

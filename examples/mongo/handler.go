@@ -1,9 +1,10 @@
 package mongo
 
 import (
-	. "github.com/Rayson9418/cdc/logger"
 	cdcmongo "github.com/Rayson9418/cdc/mongo"
 	"go.uber.org/zap"
+
+	. "examples/logger"
 )
 
 type DemoHandler struct {

@@ -1,9 +1,10 @@
 package mysql
 
 import (
-	. "github.com/Rayson9418/cdc/logger"
 	cdcmysql "github.com/Rayson9418/cdc/mysql"
 	"go.uber.org/zap"
+
+	. "examples/logger"
 )
 
 type DemoHandler struct {

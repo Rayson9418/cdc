@@ -50,8 +50,6 @@ func InitLogger() {
 	caller := zap.AddCaller()
 	// enable development mode, which shows the caller in the log
 	development := zap.Development()
-	// add default app name to log
-	//field := zap.Fields(zap.String("app", appName))
 	Logger = zap.New(
 		core,
 		caller,

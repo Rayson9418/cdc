@@ -21,15 +21,18 @@ type MongoPos struct {
 }
 
 type SyncerPosMgoStore struct {
-	coll    *mongo.Collection
+	coll *mongo.Collection
+
 	PosKey  string
 	Timeout time.Duration
 }
 
-func NewSyncerPosMgoStore(coll *mongo.Collection, key string) *SyncerPosMgoStore {
+func NewSyncerPosMgoStore(coll *mongo.Collection, key string,
+	timeout time.Duration) *SyncerPosMgoStore {
 	return &SyncerPosMgoStore{
-		PosKey: key,
-		coll:   coll,
+		coll:    coll,
+		PosKey:  key,
+		Timeout: timeout,
 	}
 }
 
@@ -91,24 +94,25 @@ func (s *SyncerPosMgoStore) Pos() (*SyncerPos, error) {
 		zap.String("syncTimeStr", syncTimeStr),
 		zap.String("key", s.PosKey))
 
-	syncTimeStrs := strings.Split(syncTimeStr, ":")
-	if len(syncTimeStr) != 3 {
+	syncTimeStrList := strings.Split(syncTimeStr, ":")
+	if len(syncTimeStrList) != 3 {
 		Logger.Error("syncTimeStr invalid",
-			zap.Strings("syncTimeStrs", syncTimeStrs))
+			zap.String("syncTimeStr", syncTimeStr),
+			zap.Strings("syncTimeStrList", syncTimeStrList))
 		return nil, errors.New("syncTimeStr invalid")
 	}
 
-	pos, err := strconv.ParseInt(syncTimeStrs[2], 10, 64)
+	pos, err := strconv.ParseInt(syncTimeStrList[2], 10, 64)
 	if err != nil {
 		Logger.Warn("pos parse err", zap.Error(err))
 		return nil, err
 	}
-	syncStart, err := strconv.ParseInt(syncTimeStrs[0], 10, 64)
+	syncStart, err := strconv.ParseInt(syncTimeStrList[0], 10, 64)
 	if err != nil {
 		Logger.Warn("syncTimeStr parse err", zap.Error(err))
 		return nil, err
 	}
-	syncEnd, err := strconv.ParseInt(syncTimeStrs[1], 10, 64)
+	syncEnd, err := strconv.ParseInt(syncTimeStrList[1], 10, 64)
 	if err != nil {
 		Logger.Warn("syncTimeStr parse err", zap.Error(err))
 		return nil, err

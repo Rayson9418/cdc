@@ -1,12 +1,12 @@
 package mongo
 
 import (
-	. "github.com/Rayson9418/cdc/logger"
 	cdcmongo "github.com/Rayson9418/cdc/mongo"
 	cdcredis "github.com/Rayson9418/cdc/redis"
 	cdcstore "github.com/Rayson9418/cdc/store"
 	"go.uber.org/zap"
 
+	. "examples/logger"
 	"examples/options"
 )
 

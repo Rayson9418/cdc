@@ -1,10 +1,10 @@
 package mongo
 
 import (
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-
-	"time"
 )
 
 type DemoData struct {

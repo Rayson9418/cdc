@@ -5,8 +5,7 @@ import (
 )
 
 const (
-	KTableNameFmt   = "%s.%s"      // 数据库.表名
-	KMonitorNameFmt = "monitor.%s" // monitor.handlerName
+	KTableNameFmt = "%s.%s" // database.table
 )
 
 func IsToday(timestamp int64) bool {
