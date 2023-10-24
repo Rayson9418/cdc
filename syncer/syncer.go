@@ -18,20 +18,23 @@ const kSyncerPosFmt = "%d:%d:%d"
 
 type DataSyncInterface interface {
 	store.SyncerPosInterface
+	// Name define the syncer name
 	Name() string
-	// QueryCount 数据总数查询的function
+	// SetPosStore set position store
+	SetPosStore(store.SyncerPosInterface)
+	// QueryCount function for total data count retrieval
 	QueryCount(start, end time.Time) (int64, error)
-	// QueryData 数据查询的function
+	// QueryData function for data retrieval
 	QueryData(offset, limit int, start, end time.Time) (interface{}, int64, error)
-	// Sink 数据同步逻辑的function
+	// Sink function for data synchronization logic
 	Sink(data interface{}) error
-	// InitData 数据同步逻辑前的初始化逻辑
+	// InitData function for initialization logic before data synchronization logic
 	InitData() error
-	// InitialPos 首次同步时的位置
+	// InitialPos for the position during the initial synchronization
 	InitialPos() (int64, int64, int64)
-	// NextPos 下次数据同步的位置
+	// NextPos for the position of the next data synchronization
 	NextPos(start, end, pos int64) (int64, int64, int64)
-	// Interval 同步间隔
+	// Interval for the synchronization interval
 	Interval() error
 }
 
@@ -42,6 +45,10 @@ type DummySyncer struct {
 
 func (s *DummySyncer) Name() string {
 	return s.SyncerName
+}
+
+func (s *DummySyncer) SetPosStore(store store.SyncerPosInterface) {
+	s.SyncerPosInterface = store
 }
 
 func (s *DummySyncer) QueryCount(start, end time.Time) (int64, error) {
@@ -73,11 +80,6 @@ func (s *DummySyncer) Interval() error {
 }
 
 func StartSyncer(syncers ...DataSyncInterface) error {
-	if err := initOpt(); err != nil {
-		Logger.Error("init syncer options err", zap.Error(err))
-		return err
-	}
-
 	errChn := make(chan error, len(syncers))
 	for _, s := range syncers {
 		go func(s DataSyncInterface) {
@@ -94,10 +96,6 @@ func StartSyncer(syncers ...DataSyncInterface) error {
 }
 
 func StartSyncerOnTime(syncers ...DataSyncInterface) error {
-	if err := initOpt(); err != nil {
-		Logger.Error("init syncer options err", zap.Error(err))
-		return err
-	}
 
 	errChn := make(chan error, len(syncers))
 	for _, s := range syncers {
@@ -114,13 +112,8 @@ func StartSyncerOnTime(syncers ...DataSyncInterface) error {
 	return nil
 }
 
-// SyncOnce 立即执行一次同步逻辑
+// SyncOnce to immediately execute the synchronization logic once
 func SyncOnce(s DataSyncInterface) error {
-	if err := initOpt(); err != nil {
-		Logger.Error("init syncer options err", zap.Error(err))
-		return err
-	}
-
 	return syncOnce(s)
 }
 
@@ -129,7 +122,7 @@ func syncAlways(s DataSyncInterface) error {
 		if err := syncOnce(s); err != nil {
 			return err
 		}
-		// 等待下次同步周期
+		// Wait for the next synchronization cycle
 		if err := s.Interval(); err != nil {
 			return err
 		}
@@ -146,7 +139,7 @@ func syncOnTime(s DataSyncInterface) error {
 		if err := syncOnce(s); err != nil {
 			return err
 		}
-		// 等待下次同步周期
+		// Wait for the next synchronization cycle
 		if err := s.Interval(); err != nil {
 			return err
 		}
@@ -162,12 +155,12 @@ func syncOnce(s DataSyncInterface) error {
 			Logger.Warn("query latest sync time err", zap.Error(err))
 			return err
 		}
-		// 首次同步执行初始化函数
+		// Execute initialization function during the initial synchronization
 		if err = s.InitData(); err != nil {
 			Logger.Error("init data failed", zap.String("sync_name", s.Name()))
 			return err
 		}
-		// 获取首次执行的pos
+		// Obtain the position of the first execution
 		syncerStartTimestamp, syncEndTimestamp, pos := s.InitialPos()
 		syncerPos = &store.SyncerPos{
 			SyncStartTimestamp: syncerStartTimestamp,
@@ -196,7 +189,7 @@ func startSyncer(s DataSyncInterface, syncerPos *store.SyncerPos) error {
 	endDate := time.Unix(syncEndTimestamp, 0)
 	startDate := time.Unix(syncStartTimestamp, 0)
 
-	// 查询数据总数
+	// Query total count of data
 	count, err := s.QueryCount(startDate, endDate)
 	if err != nil {
 		Logger.Error("query data count err",
@@ -210,13 +203,13 @@ func startSyncer(s DataSyncInterface, syncerPos *store.SyncerPos) error {
 		zap.Time("start", startDate),
 		zap.Time("end", endDate))
 
-	// 当前日期已经全部同步完成
+	// Current date has been fully synchronized
 	if count != 0 && count <= pos {
 		Logger.Info("last sync complete, start new sync",
 			zap.Int64("pos", pos),
 			zap.String("sync_name", s.Name()))
 
-		// 设置同步完成后的下次同步时间范围
+		// Set the next synchronization time range after synchronization is complete
 		syncStartTimestamp, syncEndTimestamp, pos = s.NextPos(syncStartTimestamp, syncEndTimestamp, pos)
 
 		count, err = s.QueryCount(startDate, endDate)
@@ -228,7 +221,7 @@ func startSyncer(s DataSyncInterface, syncerPos *store.SyncerPos) error {
 		}
 	}
 
-	// 分页查询
+	// Paging query
 	queryTimes := math.Ceil(float64(count-pos) / float64(opt.BatchLimit))
 	offset := int(pos)
 	for i := 0; i < int(queryTimes); i++ {

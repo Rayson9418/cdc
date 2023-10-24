@@ -3,18 +3,21 @@ package options
 import (
 	"os"
 
-	. "github.com/Rayson9418/cdc/logger"
 	cdcmongo "github.com/Rayson9418/cdc/mongo"
 	cdcmysql "github.com/Rayson9418/cdc/mysql"
 	cdcredis "github.com/Rayson9418/cdc/redis"
+	cdcsyncer "github.com/Rayson9418/cdc/syncer"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
+
+	. "examples/logger"
 )
 
 type CdcOptions struct {
-	Mysql *cdcmysql.Options `yaml:"mysql"`
-	Mongo *cdcmongo.Options `yaml:"mongo"`
-	Redis *cdcredis.Options `yaml:"redis"`
+	Mysql  *cdcmysql.Options  `yaml:"mysql"`
+	Mongo  *cdcmongo.Options  `yaml:"mongo"`
+	Redis  *cdcredis.Options  `yaml:"redis"`
+	Syncer *cdcsyncer.Options `yaml:"syncer"`
 }
 
 var CdcOpt = &CdcOptions{}

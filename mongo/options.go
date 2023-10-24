@@ -24,8 +24,6 @@ type CollectionInfo struct {
 	Actions []string `yaml:"actions"`
 }
 
-//var opt = &Options{}
-
 func NewDefaultOpt() *Options {
 	opt := new(Options)
 
@@ -42,29 +40,3 @@ func NewDefaultOpt() *Options {
 	}
 	return opt
 }
-
-//func InitWithOpt(options *Options) error {
-//	opt = options
-//	return initOpt()
-//}
-//
-//func initOpt() error {
-//	mongoOpt := &DBConfig{
-//		host:     opt.Addr,
-//		username: opt.User,
-//		password: opt.Pwd,
-//		poolSize: opt.PoolSize,
-//		direct:   opt.Direct,
-//		timeout:  time.Duration(opt.Timeout) * time.Second,
-//	}
-//	mongoOpt.uri = fmt.Sprintf(kUriFmt, mongoOpt.username, mongoOpt.password, mongoOpt.host)
-//	if !opt.Auth {
-//		mongoOpt.uri = fmt.Sprintf(kNoAuthUriFmt, mongoOpt.host)
-//	}
-//
-//	if err := Init(mongoOpt); err != nil {
-//		return err
-//	}
-//
-//	return nil
-//}

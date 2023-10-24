@@ -1,17 +1,17 @@
 package mysql
 
 import (
-	. "github.com/Rayson9418/cdc/logger"
 	cdcmysql "github.com/Rayson9418/cdc/mysql"
 	cdcredis "github.com/Rayson9418/cdc/redis"
 	cdcstore "github.com/Rayson9418/cdc/store"
 	"go.uber.org/zap"
 
+	. "examples/logger"
 	"examples/options"
 )
 
 func DemoMonitor() error {
-	// Init position store
+	// InitClient position store
 	if err := cdcredis.InitClient(options.CdcOpt.Redis); err != nil {
 		Logger.Fatal("init redis client with opt err", zap.Error(err))
 	}
