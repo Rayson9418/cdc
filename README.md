@@ -1,6 +1,6 @@
 # cdc
 
-A go library to help you monitor changed data and sync data from Mysql/Mongo.
+A Go library to assist in monitoring data changes and syncing data from MySQL/Mongo.
 
 ## how to use
 
