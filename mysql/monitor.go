@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"fmt"
-
 	"github.com/go-mysql-org/go-mysql/canal"
 	"github.com/go-mysql-org/go-mysql/mysql"
 	"go.uber.org/zap"
@@ -51,38 +50,18 @@ func (m *RowEventMonitor) StartMonitor() error {
 		Logger.Error("get bin log position err", zap.Error(err))
 		return err
 	}
-	// If it is the first time listening, start from the current gTid
-	// If listening from gTid fails, start from the current position
-	if _pos == 0 {
-		gTidSet, err := m.c.GetMasterGTIDSet()
-		if err != nil {
-			Logger.Error("get master gTid err", zap.Error(err))
-			return err
-		}
-
-		if err = m.c.StartFromGTID(gTidSet); err != nil {
-			Logger.Warn("canal run from gTid err", zap.Error(err))
-			masterPos, err := m.c.GetMasterPos()
-			if err != nil {
-				Logger.Error("get master pos err", zap.Error(err))
-				return err
-			}
-			if err = m.c.RunFrom(masterPos); err != nil {
-				Logger.Warn("canal run from position err", zap.Error(err))
-				return err
-			}
-			Logger.Info("run from pos after from gTid",
-				zap.String("file", masterPos.Name),
-				zap.Uint32("pos", masterPos.Pos))
-			return nil
-		}
-		Logger.Info("run from gTid", zap.String("gTid", gTidSet.String()))
-		return nil
-	}
-
 	pos := mysql.Position{
 		Name: _file,
 		Pos:  _pos,
+	}
+
+	// If it is the first time listening, start from the current position
+	if _pos == 0 {
+		pos, err = m.c.GetMasterPos()
+		if err != nil {
+			Logger.Error("get master pos err", zap.Error(err))
+			return err
+		}
 	}
 
 	// Start listening

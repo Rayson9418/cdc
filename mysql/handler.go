@@ -194,7 +194,9 @@ func (m *DispatchHandler) OnRow(e *canal.RowsEvent) error {
 }
 
 func (m *DispatchHandler) OnPosSynced(eh *replication.EventHeader, p mysql.Position, g mysql.GTIDSet, force bool) error {
-	m.SetGTidSet(g)
+	if g != nil {
+		m.SetGTidSet(g)
+	}
 
 	err := m.Save(p.Name, p.Pos)
 	if err != nil {
@@ -202,9 +204,7 @@ func (m *DispatchHandler) OnPosSynced(eh *replication.EventHeader, p mysql.Posit
 		return err
 	}
 
-	Logger.Info("on pos synced",
-		zap.String("position", p.String()),
-		zap.String("gTid", g.String()))
+	Logger.Info("on pos synced", zap.String("position", p.String()))
 	return nil
 }
 
