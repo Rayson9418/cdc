@@ -17,6 +17,10 @@ func getTableKey(dbName, tName string) string {
 	return fmt.Sprintf(common.KTableNameFmt, dbName, tName)
 }
 
+func getTableRegex(dbName, tName string) string {
+	return fmt.Sprintf(common.KTableRegexFmt, dbName, tName)
+}
+
 func convertColumnData(value interface{}, col *schema.TableColumn) interface{} {
 	if value == nil {
 		return nil

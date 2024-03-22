@@ -93,7 +93,7 @@ func (m *RowEventMonitor) initCanal(opt *Options) error {
 	for _, db := range opt.Databases {
 		databases = append(databases, db.Name)
 		for _, t := range db.Tables {
-			tableRegexList = append(tableRegexList, getTableKey(db.Name, t.Name))
+			tableRegexList = append(tableRegexList, getTableRegex(db.Name, t.Name))
 		}
 	}
 

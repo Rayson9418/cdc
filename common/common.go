@@ -5,7 +5,8 @@ import (
 )
 
 const (
-	KTableNameFmt = "%s.%s" // database.table
+	KTableNameFmt  = "%s.%s"   // database.table
+	KTableRegexFmt = "^%s.%s$" // database.table
 )
 
 func IsToday(timestamp int64) bool {
