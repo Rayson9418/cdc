@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"crypto/tls"
 	"errors"
 	"strings"
 	"sync"
@@ -65,6 +66,9 @@ func initSingle(opt *Options) (*redis.Client, error) {
 	if !opt.Auth {
 		connOpt.Password = ""
 	}
+	if opt.TLSConfig {
+		connOpt.TLSConfig = &tls.Config{}
+	}
 
 	redisCli := redis.NewClient(connOpt)
 	if err := redisCli.Ping(redisCli.Context()).Err(); err != nil {
@@ -81,6 +85,12 @@ func initSentinels(opt *Options) (*redis.Client, error) {
 		SentinelAddrs:    strings.Split(opt.Addr, ","),
 		Password:         opt.Pwd,
 		SentinelPassword: opt.Pwd,
+	}
+	if !opt.Auth {
+		failOverOptions.Password = ""
+	}
+	if opt.TLSConfig {
+		failOverOptions.TLSConfig = &tls.Config{}
 	}
 
 	redisCli := redis.NewFailoverClient(failOverOptions)

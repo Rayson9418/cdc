@@ -13,8 +13,9 @@ const (
 )
 
 type Options struct {
-	Type string `yaml:"type"`
-	Addr string `yaml:"addr"`
-	Pwd  string `yaml:"pwd"`
-	Auth bool   `yaml:"auth"`
+	Type      string `yaml:"type"`
+	Addr      string `yaml:"addr"`
+	Pwd       string `yaml:"pwd"`
+	Auth      bool   `yaml:"auth"`
+	TLSConfig bool   `yaml:"tlsconfig"`
 }
